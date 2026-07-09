@@ -8,15 +8,27 @@
 </head>
 <body>
     <div class="game-wrapper">
-        <h1 class="game-title">Water Drop</h1>
-        <p class="game-tagline">Catch the good drops, avoid the bad ones!</p>
-        <div class="score-panel">
-            <div class="score">Score: <span id="score">0</span></div>
-            <div class="timer">Time: <span id="time">30</span>s</div>
-            <button id="start-btn">Start Game</button>
+        <div class="brand-strip">
+            <img src="img/cw_logo-horizontal.png" alt="Community Water logo" class="brand-logo">
+            <img src="img/cw_logo.png" alt="Community Water icon" class="brand-icon">
         </div>
-        
-        <div id="game-container">
+
+        <div class="game-card">
+            <h1 class="game-title">Water Drop</h1>
+            <p class="game-tagline">Catch the good drops, avoid the bad ones!</p>
+            <div class="score-panel">
+                <div class="score">Score: <span id="score">0</span></div>
+                <div class="timer">Time: <span id="time">30</span>s</div>
+                <button id="start-btn">Start Game</button>
+            </div>
+            
+            <div id="game-container">
+            </div>
+        </div>
+
+        <div id="game-over" class="hidden">
+            <h2>Time's Up!</h2>
+            <p>Your final score was <span id="final-score">0</span></p>
         </div>
     </div>
     
