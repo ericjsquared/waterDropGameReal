@@ -6,7 +6,13 @@ let dropMaker; // Will store our timer that creates drops regularly
 let countdownTimer; // Will store the timer that counts down the game time
 let score = 0; // Stores the player's current score
 let timeLeft = 30; // Stores the remaining game time
+let gameOverTimeout = null;
 const startButton = document.getElementById("start-btn");
+const difficultySelect = document.getElementById("difficulty");
+const goodDropSound = new Audio("sound/goodDrop.mp3");
+const badDropSound = new Audio("sound/badDrop.mp3");
+const loseSound = new Audio("sound/lose.mp3");
+const winSound = new Audio("sound/win.mp3");
 
 // Wait for button click to start or pause the game
 document.getElementById("start-btn").addEventListener("click", toggleGame);
@@ -27,13 +33,51 @@ function clearGameElements() {
   document.querySelectorAll(".water-drop").forEach((drop) => drop.remove());
 }
 
+function createConfetti() {
+  const overlay = document.getElementById("game-over");
+  const confettiLayer = overlay.querySelector(".confetti-layer");
+  confettiLayer.innerHTML = "";
+
+  const colors = ["#FFC907", "#2E9DF7", "#4FCB53", "#F5402C", "#FF902A"];
+
+  for (let i = 0; i < 24; i += 1) {
+    const piece = document.createElement("span");
+    piece.className = "confetti-piece";
+    piece.style.left = `${Math.random() * 100}%`;
+    piece.style.backgroundColor = colors[i % colors.length];
+    piece.style.setProperty("--x-offset", `${(Math.random() - 0.5) * 220}px`);
+    piece.style.animationDuration = `${1.6 + Math.random() * 1.2}s`;
+    piece.style.animationDelay = `${Math.random() * 0.2}s`;
+    confettiLayer.appendChild(piece);
+  }
+}
+
+function playSound(audio) {
+  audio.currentTime = 0;
+  audio.play().catch(() => {});
+}
+
 function showGameOverMessage() {
+  const overlay = document.getElementById("game-over");
   document.getElementById("final-score").textContent = score;
-  document.getElementById("game-over").classList.remove("hidden");
+  overlay.classList.remove("hidden");
+  overlay.classList.remove("game-over-success", "game-over-zero");
+
+  if (score > 5) {
+    overlay.classList.add("game-over-success");
+    createConfetti();
+    playSound(winSound);
+  } else if (score === 0) {
+    overlay.classList.add("game-over-zero");
+    playSound(loseSound);
+  }
 }
 
 function hideGameOverMessage() {
-  document.getElementById("game-over").classList.add("hidden");
+  const overlay = document.getElementById("game-over");
+  overlay.classList.add("hidden");
+  overlay.classList.remove("game-over-success", "game-over-zero");
+  overlay.querySelector(".confetti-layer").innerHTML = "";
 }
 
 function stopGame() {
@@ -44,10 +88,15 @@ function stopGame() {
   clearInterval(countdownTimer);
   setButtonLabel("Start Game");
 
-  setTimeout(() => {
-    showGameOverMessage();
+  if (gameOverTimeout) {
+    clearTimeout(gameOverTimeout);
+  }
+
+  showGameOverMessage();
+  gameOverTimeout = setTimeout(() => {
+    hideGameOverMessage();
+    gameOverTimeout = null;
   }, 3000);
-  hideGameOverMessage();
 }
 
 function startGame() {
@@ -59,6 +108,10 @@ function startGame() {
   updateScoreDisplay();
   updateTimeDisplay();
   setButtonLabel("Pause Game");
+  if (gameOverTimeout) {
+    clearTimeout(gameOverTimeout);
+    gameOverTimeout = null;
+  }
   hideGameOverMessage();
 
   clearGameElements();
@@ -117,6 +170,20 @@ function toggleGame() {
   }
 }
 
+function getDropDuration() {
+  const difficulty = difficultySelect.value;
+
+  switch (difficulty) {
+    case "medium":
+      return `${Number((Math.random() * (4 - 3) + 3).toFixed(2))}s`;
+    case "hard":
+      return `${Number((Math.random() * (3 - 2) + 2).toFixed(2))}s`;
+    case "easy":
+    default:
+      return "4s";
+  }
+}
+
 function createDrop() {
   // Create a new div element that will be our water drop
   const drop = document.createElement("div");
@@ -139,29 +206,50 @@ function createDrop() {
   const xPosition = Math.random() * (gameWidth - 60);
   drop.style.left = xPosition + "px";
 
-  // Make drops fall for 4 seconds
-  drop.style.animationDuration = "4s";
+  // Apply the fall duration based on the selected difficulty
+  drop.style.animationDuration = getDropDuration();
 
   // Add the new drop to the game screen
   document.getElementById("game-container").appendChild(drop);
 
   // Make each drop clickable and update the score and remove the drop when clicked
   drop.style.cursor = "pointer";
-  drop.addEventListener("click", () => {
-    if (!gameRunning || gamePaused) return;
+  let resolved = false;
 
-    if (drop.classList.contains("bad-drop")) {
-      score = Math.max(0, score - 1);
+  const finalizeDrop = (wasClicked) => {
+    if (resolved) return;
+    resolved = true;
+
+    if (wasClicked) {
+      if (drop.classList.contains("bad-drop")) {
+        score = Math.max(0, score - 1);
+        playSound(badDropSound);
+      } else {
+        score += 1;
+        playSound(goodDropSound);
+      }
     } else {
-      score += 1;
+      const difficulty = difficultySelect.value;
+      if (difficulty === "medium" || difficulty === "hard") {
+        if (drop.classList.contains("bad-drop")) {
+          score += 1;
+        } else {
+          score = Math.max(0, score - 1);
+        }
+      }
     }
 
     updateScoreDisplay();
     drop.remove();
+  };
+
+  drop.addEventListener("click", () => {
+    if (!gameRunning || gamePaused) return;
+    finalizeDrop(true);
   });
 
   // Remove drops that reach the bottom (weren't clicked)
   drop.addEventListener("animationend", () => {
-    drop.remove(); // Clean up drops that weren't caught
+    finalizeDrop(false);
   });
 }

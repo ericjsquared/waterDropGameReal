@@ -19,16 +19,30 @@
             <div class="score-panel">
                 <div class="score">Score: <span id="score">0</span></div>
                 <div class="timer">Time: <span id="time">30</span>s</div>
+                <label class="difficulty-control" for="difficulty">
+                    <span>Difficulty</span>
+                    <select id="difficulty">
+                        <option value="easy">Easy</option>
+                        <option value="medium">Medium</option>
+                        <option value="hard">Hard</option>
+                    </select>
+                </label>
                 <button id="start-btn">Start Game</button>
             </div>
             
-            <div id="game-container">
+            <div id="game-container"></div>
+            <div class="game-links">
+                <a href="https://www.charitywater.org/global-water-crisis?_gl=1*et3wfr*_up*MQ..*_gs*MQ..&gclid=Cj0KCQjw39zSBhDhDhARIsANammDsSZCCk70ItNWruB2deiv05tDnEIpnvf_4YJ8eoB4N0gSq2jxeuyJIaAil7EALw_wcB&gbraid=0AAAAADNj5D_k3bYEx95hRosi0b8V_m2Z3" target="_blank" rel="noopener noreferrer">Visit Charity: water</a>
+                <a href="https://www.charitywater.org/donate/the-spring?_gl=1*1qwszov*_up*MQ..*_gs*MQ..&gclid=Cj0KCQjw39zSBhDhARIsANammDsSZCCk70ItNWruB2deiv05tDnEIpnvf_4YJ8eoB4N0gSq2jxeuyJIaAil7EALw_wcB&gbraid=0AAAAADNj5D_k3bYEx95hRosi0b8V_m2Z3" target="_blank" rel="noopener noreferrer">Donate Now</a>
             </div>
         </div>
 
         <div id="game-over" class="hidden">
-            <h2>Time's Up!</h2>
-            <p>Your final score was <span id="final-score">0</span></p>
+            <div class="confetti-layer" aria-hidden="true"></div>
+            <div class="game-over-content">
+                <h2>Time's Up!</h2>
+                <p>Your final score was <span id="final-score">0</span></p>
+            </div>
         </div>
     </div>
     

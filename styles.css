@@ -29,8 +29,11 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background: linear-gradient(135deg, #eaf7ff 0%, #f9fdff 100%);
-    font-family: Arial, sans-serif;
+    background-image: url("img/water.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    font-family: "Kazimir Text", serif !important;
     padding: 24px;
 }
 
@@ -48,6 +51,11 @@ body {
     justify-content: center;
     gap: 12px;
     width: 100%;
+    padding: 10px 16px;
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(46, 157, 247, 0.18);
+    border-radius: 999px;
+    box-shadow: 0 8px 20px rgba(15, 76, 129, 0.1);
 }
 
 .brand-logo {
@@ -60,11 +68,12 @@ body {
 }
 
 .game-card {
-    background: rgba(255, 255, 255, 0.95);
-    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.96);
+    border-radius: 24px;
     padding: 24px;
-    box-shadow: 0 16px 40px rgba(22, 95, 140, 0.15);
-    border: 2px solid rgba(46, 157, 247, 0.2);
+    box-shadow: 0 20px 45px rgba(22, 95, 140, 0.16);
+    border: 1px solid rgba(46, 157, 247, 0.18);
+    backdrop-filter: blur(8px);
 }
 
 .score-panel {
@@ -73,10 +82,11 @@ body {
     align-items: center;
     width: 800px;
     padding: 12px 16px;
-    background: linear-gradient(90deg, #ffffff 0%, #eaf7ff 100%);
-    border-radius: 12px;
-    box-shadow: inset 0 0 0 1px rgba(46, 157, 247, 0.15);
+    background: linear-gradient(90deg, #ffffff 0%, #eef8ff 100%);
+    border-radius: 14px;
+    box-shadow: inset 0 0 0 1px rgba(46, 157, 247, 0.16), 0 8px 20px rgba(46, 157, 247, 0.08);
     margin-bottom: 16px;
+    gap: 12px;
 }
 
 .timer {
@@ -88,18 +98,49 @@ body {
 #game-container {
     width: 800px;
     height: 600px;
-    background: radial-gradient(circle at top, #f4fcff 0%, #dff5ff 45%, #bfe4ff 100%);
-    border: 2px solid #2e9df7;
-    border-radius: 16px;
+    background:
+        linear-gradient(180deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.02) 100%),
+        url("img/plains.avif");
+    background-size: cover;
+    background-position: center;
+    border: 1px solid rgba(46, 157, 247, 0.3);
+    border-radius: 18px;
     position: relative;
     overflow: hidden;
-    box-shadow: inset 0 0 30px rgba(46, 157, 247, 0.15);
+    box-shadow: inset 0 0 40px rgba(46, 157, 247, 0.16), 0 12px 28px rgba(46, 157, 247, 0.12);
+}
+
+.game-links {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 16px;
+    padding: 16px 0 4px;
+    z-index: 2;
+}
+
+.game-links a {
+    display: inline-block;
+    padding: 10px 16px;
+    border-radius: 999px;
+    background: #ffc907;
+    color: #0f4c81;
+    text-decoration: none;
+    font-weight: 700;
+    box-shadow: 0 8px 18px rgba(15, 76, 129, 0.16);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.game-links a:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 22px rgba(15, 76, 129, 0.22);
 }
 
 #game-over {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.75);
+    background: rgba(10, 29, 45, 0.78);
     color: white;
     display: flex;
     flex-direction: column;
@@ -108,10 +149,71 @@ body {
     gap: 10px;
     font-size: 32px;
     z-index: 100;
+    transition: background 0.3s ease;
 }
 
 #game-over.hidden {
     display: none;
+}
+
+#game-over.game-over-success {
+    background: rgba(12, 58, 24, 0.78);
+}
+
+#game-over.game-over-zero {
+    background: rgba(255, 235, 235, 0.95);
+    color: #7a1f1f;
+}
+
+.game-over-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+}
+
+.confetti-layer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.confetti-piece {
+    position: absolute;
+    top: -12px;
+    width: 10px;
+    height: 18px;
+    border-radius: 3px;
+    opacity: 0.95;
+    animation: confettiFall ease-out forwards;
+}
+
+@keyframes confettiFall {
+    0% {
+        transform: translate3d(0, 0, 0) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translate3d(var(--x-offset), 180px, 0) rotate(720deg);
+        opacity: 0;
+    }
+}
+
+.difficulty-control {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #0f4c81;
+    font-weight: bold;
+}
+
+#difficulty {
+    padding: 8px 12px;
+    border: 1px solid #2e9df7;
+    border-radius: 999px;
+    background: white;
+    color: #0f4c81;
+    font-weight: 600;
 }
 
 #start-btn {
@@ -139,31 +241,17 @@ body {
 
 .water-drop {
     position: absolute;
-    width: 60px;
-    height: 60px;
-    background: radial-gradient(circle at 30% 30%, #ffffff 0%, #7ed6ff 35%, #2e9df7 80%, #0b6cb5 100%);
-    border-radius: 50%;
+    width: 70px;
+    height: 70px;
+    background-image: url("img/goodDrop.png");
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
     animation: dropFall linear forwards;
     transform-origin: center;
     cursor: pointer;
-    padding: 15px;
-    margin: -15px;
     transition: transform 0.1s ease;
-    box-shadow: inset 0 2px 8px rgba(255, 255, 255, 0.55), 0 8px 16px rgba(0, 0, 0, 0.18);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.water-drop::after {
-    content: "";
-    width: 70%;
-    height: 70%;
-    background-image: url("img/water-can-transparent.png");
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    opacity: 0.9;
+    filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.18));
 }
 
 .water-drop:hover {
@@ -171,7 +259,7 @@ body {
 }
 
 .bad-drop {
-    background: radial-gradient(circle at 30% 30%, #fff0f0 0%, #ff8a80 35%, #f5402c 80%, #b71c1c 100%);
+    background-image: url("img/badDrop.png");
 }
 
 .game-title {
@@ -181,6 +269,7 @@ body {
     margin-bottom: 6px;
     text-align: center;
     font-weight: bold;
+    letter-spacing: 0.02em;
 }
 
 .game-tagline {
@@ -188,6 +277,7 @@ body {
     font-size: 18px;
     margin-bottom: 18px;
     text-align: center;
+    font-weight: 500;
 }
 
 @keyframes dropFall {
