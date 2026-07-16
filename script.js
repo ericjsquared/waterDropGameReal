@@ -177,7 +177,7 @@ function getDropDuration() {
     case "medium":
       return `${Number((Math.random() * (4 - 3) + 3).toFixed(2))}s`;
     case "hard":
-      return `${Number((Math.random() * (3 - 2) + 2).toFixed(2))}s`;
+      return `${Number((Math.random() * (4 - 1.5) + 1.5).toFixed(2))}s`;
     case "easy":
     default:
       return "4s";
